@@ -1,4 +1,4 @@
-# Sprite Animations
+#  Project 1: Vanilla JavaScript sprite animation techniques
 
 ## Description
 This is the first project from the freeCodeCamp youtube video JavaScript Game Development Course for Beginners. 
