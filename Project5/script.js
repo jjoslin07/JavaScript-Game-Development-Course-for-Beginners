@@ -227,7 +227,6 @@ function drawPause() {
 
 window.addEventListener('click', function (e) {
 	const detectPixelColor = ctxcollisionCtx.getImageData(e.x, e.y, 1, 1);
-	console.log(detectPixelColor);
 	const pc = detectPixelColor.data;
 	ravens.forEach((object) => {
 		if (
@@ -248,6 +247,15 @@ window.addEventListener('keydown', (e) => {
 		lives++;
 	}
 });
+// Secret key to destroy ravens without using mouse 😈
+window.addEventListener('keydown', (e) => {
+	if (e.key === '~') {
+		ravens[0].markedForDeletion = true;
+		score++;
+		getNewLife++;
+		explosions.push(new Explosion(e.x, e.y, e.width));
+	}
+});
 
 function animate(timeStamp) {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -262,6 +270,7 @@ function animate(timeStamp) {
 			return a.width - b.width;
 		});
 	}
+
 	drawLives();
 	drawScore();
 	if (!paused) {
