@@ -21,6 +21,22 @@ let lastTime = 0;
 let getNewLife = 0;
 
 let ravens = [];
+let paused = false;
+function togglePause() {
+	if (!paused) {
+		paused = true;
+	} else if (paused) {
+		paused = false;
+	}
+}
+window.addEventListener('keydown', function (e) {
+	const key = e.key;
+	if (key === 'p') {
+		// p key
+		togglePause();
+	}
+});
+
 class Raven {
 	constructor() {
 		this.spriteWidth = 271;
@@ -54,6 +70,7 @@ class Raven {
 			')';
 		this.hasTrail = Math.random() > 0.5;
 	}
+
 	update(deltaTime) {
 		if (this.y < 0 || this.y > canvas.height - this.height) {
 			this.direcitonY = this.direcitonY * -1;
@@ -114,6 +131,7 @@ class Explosion {
 		this.frameInterval = 200;
 		this.markedForDeletion = false;
 	}
+
 	update(deltaTime) {
 		if (this.frame === 0) this.sound.play();
 		this.timeSinceLastFrame += deltaTime;
@@ -167,19 +185,24 @@ class Particle {
 }
 
 function drawScore() {
+	ctx.save();
 	ctx.fillStyle = 'black';
 	ctx.fillText('Score: ' + score, 50, 75);
 	ctx.fillStyle = 'white';
 	ctx.fillText('Score: ' + score, 55, 80);
+	ctx.restore();
 }
 function drawLives() {
+	ctx.save();
 	ctx.fillStyle = 'black';
 	ctx.fillText('Lives: ' + lives, 275, 75);
 	ctx.fillStyle = 'white';
 	ctx.fillText('Lives: ' + lives, 280, 80);
+	ctx.restore();
 }
 
 function drawGameOver() {
+	ctx.save();
 	const audio = new Audio();
 	audio.src = 'game-over-2.wav';
 	audio.play();
@@ -188,7 +211,18 @@ function drawGameOver() {
 	ctx.fillText('GAME OVER', canvas.width * 0.5 + 5, canvas.height * 0.5 + 5);
 	ctx.fillStyle = 'white';
 	ctx.fillText('GAME OVER', canvas.width * 0.5, canvas.height * 0.5);
+	ctx.restore();
 }
+function drawPause() {
+	ctx.save();
+	ctx.textAlign = 'center';
+	ctx.fillStyle = 'black';
+	ctx.fillText('PAUSED', canvas.width * 0.5 + 5, canvas.height * 0.5 + 5);
+	ctx.fillStyle = 'white';
+	ctx.fillText('PAUSED', canvas.width * 0.5, canvas.height * 0.5);
+	ctx.restore();
+}
+
 window.addEventListener('click', function (e) {
 	const detectPixelColor = ctxcollisionCtx.getImageData(e.x, e.y, 1, 1);
 	console.log(detectPixelColor);
@@ -207,25 +241,34 @@ window.addEventListener('click', function (e) {
 	});
 });
 
+window.addEventListener('keydown', (e) => {
+	if (e.key === '$') {
+		lives++;
+	}
+});
+
 function animate(timeStamp) {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctxcollisionCtx.clearRect(0, 0, canvas.width, canvas.height);
 	let deltaTime = timeStamp - lastTime;
 	lastTime = timeStamp;
 	timeToNextRaven += deltaTime;
-	if (timeToNextRaven > ravenInterval) {
+	if (timeToNextRaven > ravenInterval && paused === false) {
 		ravens.push(new Raven());
 		timeToNextRaven = 0;
 		ravens.sort(function (a, b) {
 			return a.width - b.width;
 		});
 	}
-	drawScore();
 	drawLives();
-	[...particles, ...ravens, ...explosions].forEach((object) =>
-		object.update(deltaTime)
-	);
-	[...particles, ...ravens, ...explosions].forEach((object) => object.draw());
+	drawScore();
+	if (!paused) {
+		[...particles, ...ravens, ...explosions].forEach((object) =>
+			object.update(deltaTime)
+		);
+		[...particles, ...ravens, ...explosions].forEach((object) => object.draw());
+	}
+	if (paused) drawPause();
 	ravens = ravens.filter((object) => !object.markedForDeletion);
 	explosions = explosions.filter((object) => !object.markedForDeletion);
 	particles = particles.filter((object) => !object.markedForDeletion);
