@@ -11,12 +11,14 @@ collisionCanvas.width = window.innerWidth;
 collisionCanvas.height = window.innerHeight;
 
 let score = 0;
+let lives = 3;
 let gameOver = false;
 ctx.font = '50px Impact';
 
 let timeToNextRaven = 0;
 let ravenInterval = 500;
 let lastTime = 0;
+let getNewLife = 0;
 
 let ravens = [];
 class Raven {
@@ -70,8 +72,14 @@ class Raven {
 				}
 			}
 		}
-		if (this.x < 0 - this.width) gameOver = true;
+		if (this.x < 0 - this.width) lives--;
+		if (lives < 0) gameOver = true;
+		if (getNewLife === 10) {
+			lives++;
+			getNewLife = 0;
+		}
 	}
+
 	draw() {
 		ctxcollisionCtx.fillStyle = this.color;
 		ctxcollisionCtx.fillRect(this.x, this.y, this.width, this.height);
@@ -164,11 +172,17 @@ function drawScore() {
 	ctx.fillStyle = 'white';
 	ctx.fillText('Score: ' + score, 55, 80);
 }
+function drawLives() {
+	ctx.fillStyle = 'black';
+	ctx.fillText('Lives: ' + lives, 275, 75);
+	ctx.fillStyle = 'white';
+	ctx.fillText('Lives: ' + lives, 280, 80);
+}
 
 function drawGameOver() {
 	const audio = new Audio();
 	audio.src = 'game-over-2.wav';
-	// audio.play();
+	audio.play();
 	ctx.textAlign = 'center';
 	ctx.fillStyle = 'black';
 	ctx.fillText('GAME OVER', canvas.width * 0.5 + 5, canvas.height * 0.5 + 5);
@@ -187,8 +201,8 @@ window.addEventListener('click', function (e) {
 		) {
 			object.markedForDeletion = true;
 			score++;
+			getNewLife++;
 			explosions.push(new Explosion(object.x, object.y, object.width));
-			console.log(explosions);
 		}
 	});
 });
@@ -207,6 +221,7 @@ function animate(timeStamp) {
 		});
 	}
 	drawScore();
+	drawLives();
 	[...particles, ...ravens, ...explosions].forEach((object) =>
 		object.update(deltaTime)
 	);
@@ -214,7 +229,6 @@ function animate(timeStamp) {
 	ravens = ravens.filter((object) => !object.markedForDeletion);
 	explosions = explosions.filter((object) => !object.markedForDeletion);
 	particles = particles.filter((object) => !object.markedForDeletion);
-	// console.log(ravens);
 	if (!gameOver) requestAnimationFrame(animate);
 	else drawGameOver();
 }
