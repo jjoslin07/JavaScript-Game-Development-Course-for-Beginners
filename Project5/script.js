@@ -208,9 +208,11 @@ function drawGameOver() {
 	audio.play();
 	ctx.textAlign = 'center';
 	ctx.fillStyle = 'black';
-	ctx.fillText('GAME OVER', canvas.width * 0.5 + 5, canvas.height * 0.5 + 5);
+	ctx.fillText('GAME OVER ', canvas.width * 0.5 - 5, canvas.height * 0.5 - 5);
 	ctx.fillStyle = 'white';
-	ctx.fillText('GAME OVER', canvas.width * 0.5, canvas.height * 0.5);
+	ctx.fillText('GAME OVER ', canvas.width * 0.5, canvas.height * 0.5);
+	ctx.fillText('😵', canvas.width * 0.5 + 135, canvas.height * 0.5);
+	ctx.fillText('😵', canvas.width * 0.5 - 145, canvas.height * 0.5);
 	ctx.restore();
 }
 function drawPause() {
@@ -240,7 +242,7 @@ window.addEventListener('click', function (e) {
 		}
 	});
 });
-
+// Secret key to add more lives 😈
 window.addEventListener('keydown', (e) => {
 	if (e.key === '$') {
 		lives++;
