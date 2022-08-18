@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
 			this.enemyTypes = ['worm', 'ghost', 'spider'];
 		}
 		update(deltaTime) {
-			console.log(this.enemies);
+			// console.log(this.enemies);
 			this.enemies = this.enemies.filter((object) => !object.markedForDeletion);
 			if (this.enemyTimer > this.enemyInterval) {
 				this.#addNewEnemy();
@@ -142,6 +142,7 @@ document.addEventListener('DOMContentLoaded', function () {
 			this.maxLength = Math.random() * this.game.height;
 		}
 		update(deltaTime) {
+			//remove spiders
 			super.update(deltaTime);
 			if (this.y < 0 - this.height * 2) {
 				this.markedForDeletion = true;
