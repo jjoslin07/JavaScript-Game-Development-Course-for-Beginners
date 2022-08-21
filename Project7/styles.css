@@ -20,3 +20,11 @@ body {
 #enemyImage {
 	display: none;
 }
+#fullScreenButton {
+	position: absolute;
+	font-size: 20px;
+	padding: 10px;
+	top: 10px;
+	left: 50%;
+	transform: translate(-50%);
+}
